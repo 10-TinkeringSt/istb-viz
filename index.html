@@ -74,7 +74,7 @@
         <div class="verdict-wrap">
           <span class="led off" id="verdictLed" title="Enter advertised speeds to enable the verdict"></span>
           <div class="verdict">
-            <div class="label">ISP performance verdict</div>
+            <div class="label">ISP performance report</div>
             <div class="headline" id="verdictText">—</div>
           </div>
         </div>
@@ -85,16 +85,19 @@
       </div>
 
       <div class="panel-controls instrument-controls">
-        <label class="fld">Advertised download
-          <input type="number" id="advDown" placeholder="Mbps" min="0" step="1">
-        </label>
-        <label class="fld">Advertised upload
-          <input type="number" id="advUp" placeholder="Mbps" min="0" step="1">
-        </label>
-        <label class="fld">Underperformance threshold
-          <input type="number" id="advThresh" value="50" min="1" max="100" step="1" style="width:90px">
-        </label>
-        <span class="note" style="margin-top:18px;align-self:end">% of advertised below which a test counts as underperforming</span>
+        <div class="fld">
+          <span>Advertised download</span>
+          <input type="number" id="advDown" placeholder="Mbps" min="0" step="1" inputmode="numeric" pattern="\d*" aria-label="Advertised download">
+        </div>
+        <div class="fld">
+          <span>Advertised upload</span>
+          <input type="number" id="advUp" placeholder="Mbps" min="0" step="1" inputmode="numeric" pattern="\d*" aria-label="Advertised upload">
+        </div>
+        <div class="fld">
+          <span>Download Minimum guarantee</span>
+          <input type="number" id="advThresh" placeholder="Mbps" min="0" step="1" style="width:90px" inputmode="numeric" pattern="\d*" aria-label="Minimum guarantee">
+        </div>
+        <span class="note" style="margin-top:18px;align-self:end">Tests below this Mbps threshold count as underperforming</span>
       </div>
 
       <div class="readouts" id="readouts"></div>
@@ -251,12 +254,12 @@
 
     <!-- DISPUTE / EVIDENCE -->
     <section class="view hidden" data-panel="dispute">
-      <div class="panel" style="padding-bottom:8px">
+      <!-- <div class="panel" style="padding-bottom:8px">
         <div class="panel-h">
           <h3>Build your evidence summary</h3>
           <div class="desc">Enter the speeds your ISP advertised. The summary below compares them against what was actually measured, ready to screenshot.</div>
         </div>
-      </div>
+      </div> -->
 
       <div class="evidence">
         <div class="ev-head">

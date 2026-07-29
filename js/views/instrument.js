@@ -53,32 +53,23 @@ function drawInstrument(){
   */
 }
 function setVerdict(dl, ul, errRate){
-  const advD=num($('#advDown').value), advU=num($('#advUp').value);
+  const advD=num($('#advDown').value);
   const led=$('#verdictLed'), txt=$('#verdictText');
   led.className='led';
   led.title='';
   led.onclick=null;
-  const advPresent = advD>0 || advU>0;
   if(!dl.length){ led.classList.add('warn'); txt.textContent='No full-test data in range'; return; }
-  if(!advPresent){
+  if(!advD){
     led.classList.add('off');
-    led.title='Enter advertised speeds to enable the verdict';
+    led.title='Enter advertised download speed to enable the verdict';
     led.onclick=()=>$('#advDown').focus();
-    txt.textContent='Advertised speeds needed for verdict';
+    txt.textContent='Enter \'Advertised Download\' value for a decision on ISP performance';
     return;
   }
   const medD=quantile(dl,.5);
-  if(advD){
-    const pct=medD/advD*100;
-    if(pct>=80){led.classList.add('ok');txt.textContent=`On track — ${fmt(pct,0)}% of advertised download`;}
-    else if(pct>=50){led.classList.add('warn');txt.textContent=`Under target — ${fmt(pct,0)}% of advertised download`;}
-    else{led.classList.add('err');txt.textContent=`Sustained underperformance — ${fmt(pct,0)}% of advertised`;}
-  } else {
-    const medU=quantile(ul,.5);
-    const pct=advU?medU/advU*100:0;
-    if(pct>=80){led.classList.add('ok');txt.textContent=`On track — ${fmt(pct,0)}% of advertised upload`;}
-    else if(pct>=50){led.classList.add('warn');txt.textContent=`Under target — ${fmt(pct,0)}% of advertised upload`;}
-    else{led.classList.add('err');txt.textContent=`Sustained underperformance — ${fmt(pct,0)}% of advertised`;}
-  }
+  const pct=medD/advD*100;
+  if(pct>=80){led.classList.add('ok');txt.textContent=`On track — ${fmt(pct,0)}% of advertised download`;}
+  else if(pct>=50){led.classList.add('warn');txt.textContent=`Under target — ${fmt(pct,0)}% of advertised download`;}
+  else{led.classList.add('err');txt.textContent=`Sustained underperformance — ${fmt(pct,0)}% of advertised`;}
 }
 

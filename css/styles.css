@@ -188,9 +188,10 @@ section.view{margin-top:18px}
 .stat .v{font-family:"JetBrains Mono";font-size:21px;margin-top:5px}
 .stat .v small{font-size:11px;color:var(--txt-2)}
 
-label.fld{display:inline-flex;flex-direction:column;gap:4px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-3)}
+.fld{display:inline-flex;flex-direction:column;gap:4px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-3)}
 .instrument-controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;padding-top:10px;border-top:1px solid var(--line);}
 .instrument-controls .fld{min-width:150px;flex:1 1 180px;}
+.instrument-controls .fld span{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-3);}
 .instrument-controls .note{font-size:11px;color:var(--txt-3);align-self:flex-end;max-width:220px;}
 input[type=number],input[type=text]{
   background:var(--deck);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 10px;

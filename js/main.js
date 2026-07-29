@@ -29,7 +29,16 @@ function wireControls(){
     b.addEventListener('click',()=>{segPress(b);drawCdn();}));
   $$('#todMetric button').forEach(b=>
     b.addEventListener('click',()=>{segPress(b);drawTod();}));
-  ['advDown','advUp','advThresh'].forEach(id=>$('#'+id).addEventListener('input',drawDispute));
+  ['advDown','advUp','advThresh'].forEach(id=>{
+    const el=$('#'+id);
+    el.addEventListener('input',drawDispute);
+    el.addEventListener('blur',()=>{
+      const n=num(el.value);
+      el.value = n!=null ? String(Math.trunc(n)) : '';
+      refreshAll();
+    });
+    el.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); el.blur(); }});
+  });
 }
 function segPress(btn){ [...btn.parentElement.children].forEach(c=>c.setAttribute('aria-pressed', c===btn?'true':'false')); }
 
