@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ISTB · Internet Speed Telemetry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <!-- top bar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M2 14 L7 14 L9.5 6 L12.5 19 L15 11 L17 14 L22 14" stroke="#4DD0E1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="t1">ISTB</div>
+        <div class="t2">Speed Telemetry</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="toolbar" id="toolbar" style="display:none">
+      <div class="seg" role="group" aria-label="Time range">
+        <button data-range="1" aria-pressed="false">24h</button>
+        <button data-range="7" aria-pressed="false">7d</button>
+        <button data-range="30" aria-pressed="false">30d</button>
+        <button data-range="0" aria-pressed="true">All</button>
+      </div>
+      <div class="seg" role="group" aria-label="Timezone">
+        <button data-tz="local" aria-pressed="true">Local</button>
+        <button data-tz="utc" aria-pressed="false">UTC</button>
+      </div>
+      <button class="btn ghost" id="newFile" title="Load a different file">↻ New file</button>
+    </div>
+  </header>
+
+  <!-- dropzone -->
+  <div id="dropView">
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Drop or choose a database file">
+      <div class="scope" aria-hidden="true">
+        <svg width="46" height="46" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="9.2" stroke="#2E3A52" stroke-width="1"/>
+          <circle cx="12" cy="12" r="5" stroke="#2E3A52" stroke-width="1"/>
+          <path d="M3 12 L7 12 L9 7 L12 17 L14 12 L21 12" stroke="#4DD0E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2>Drop your results file to read it</h2>
+      <p>Everything runs in your browser — your data is never uploaded anywhere. Drag in the file your Pi produced, or click to browse.</p>
+      <div class="formats">
+        <span class="tag">results.db</span>
+        <span class="tag">results.csv</span>
+      </div>
+      <span class="muted-link">SQLite read locally with sql.js (WASM) · charts with Chart.js</span>
+    </div>
+    <div id="dropErr"></div>
+    <input type="file" id="fileInput" accept=".db,.sqlite,.sqlite3,.csv" style="position:absolute;left:-9999px" aria-hidden="true">
+  </div>
+
+  <div id="loadingView" class="loading hidden"><span class="spin"></span><span id="loadingMsg">Reading file…</span></div>
+
+  <!-- main dashboard -->
+  <main id="app" class="hidden">
+
+    <!-- instrument header -->
+    <div class="instrument">
+      <div class="inst-top">
+        <div class="verdict-wrap">
+          <span class="led off" id="verdictLed" title="Enter advertised speeds to enable the verdict"></span>
+          <div class="verdict">
+            <div class="label">ISP performance verdict</div>
+            <div class="headline" id="verdictText">—</div>
+          </div>
+        </div>
+        <div class="period">
+          <div>Captured <span class="mono" id="periodDays">—</span></div>
+          <div class="mono" id="periodRange" style="color:var(--txt-2);font-size:11px;margin-top:3px">—</div>
+        </div>
+      </div>
+
+      <div class="panel-controls instrument-controls">
+        <label class="fld">Advertised download
+          <input type="number" id="advDown" placeholder="Mbps" min="0" step="1">
+        </label>
+        <label class="fld">Advertised upload
+          <input type="number" id="advUp" placeholder="Mbps" min="0" step="1">
+        </label>
+        <label class="fld">Underperformance threshold
+          <input type="number" id="advThresh" value="50" min="1" max="100" step="1" style="width:90px">
+        </label>
+        <span class="note" style="margin-top:18px;align-self:end">% of advertised below which a test counts as underperforming</span>
+      </div>
+
+      <div class="readouts" id="readouts"></div>
+
+      <!--
+        <div class="strip">
+          <div class="sl">
+            <span class="ttl">Download trace · Cloudflare 25 MB</span>
+            <span class="now mono" id="stripNow">—</span>
+          </div>
+          <div class="scope-wrap"><canvas id="stripCanvas"></canvas></div>
+        </div>
+      -->
+    </div>
+
+    <!-- tabs -->
+    <div class="tabs" role="tablist" aria-label="Views">
+      <button class="tab" role="tab" data-tab="overview" aria-selected="true">Overview</button>
+      <button class="tab" role="tab" data-tab="speed" aria-selected="false">Speed trends</button>
+      <button class="tab" role="tab" data-tab="latency" aria-selected="false">Latency &amp; Bufferbloat</button>
+      <button class="tab" role="tab" data-tab="jitter" aria-selected="false">Jitter</button>
+      <button class="tab" role="tab" data-tab="cdn" aria-selected="false">CDN comparison</button>
+      <button class="tab" role="tab" data-tab="tod" aria-selected="false">Time of day</button>
+      <button class="tab" role="tab" data-tab="reliability" aria-selected="false">Reliability</button>
+      <button class="tab" role="tab" data-tab="dispute" aria-selected="false">ISP evidence</button>
+    </div>
+
+    <!-- OVERVIEW -->
+    <section class="view" data-panel="overview">
+      <div class="panel">
+        <div class="panel-h">
+          <h3>Download over time</h3>
+          <div class="desc">Cloudflare full test, split by file size. The shaded band spans the slowest-to-fastest of the three sizes each cycle. Tick a source below to overlay its 25 MB download for comparison.</div>
+        </div>
+        <div class="panel-controls">
+          <div style="display:flex;gap:8px;align-items:center"><span class="chk-label">Cloudflare sizes:</span><span id="ovDlSizes" class="chk-row"></span></div>
+          <div id="ovDlRight" style="margin-left:auto;margin-right:18px"></div>
+        </div>
+        <div class="chart-box tall"><canvas id="cOverviewDl"></canvas></div>
+        
+      </div>
+      <div class="panel">
+        <div class="panel-h">
+          <h3>Upload over time</h3>
+          <div class="desc">Cloudflare full test, split by file size with the same spread band. CDN sources measure download only, so there's nothing to overlay here.</div>
+        </div>
+        <div class="panel-controls">
+          <div style="display:flex;gap:8px;align-items:center"><span class="chk-label">Cloudflare sizes:</span><span id="ovUlSizes" class="chk-row"></span></div>
+          <div id="ovUlRight" style="margin-left:auto;margin-right:18px"></div>
+        </div>
+        <div class="chart-box tall"><canvas id="cOverviewUl"></canvas></div>
+        
+      </div>
+    </section>
+
+    <!-- SPEED -->
+    <section class="view hidden" data-panel="speed">
+      <div class="panel">
+        <div class="panel-h">
+          <h3>Speed trends</h3>
+          <div class="desc">Pick a test and metric. File-size split shows whether short bursts beat sustained transfers — a classic throttling tell.</div>
+        </div>
+        <div class="panel-controls">
+          <div class="seg" id="speedTest" role="group" aria-label="Test type"></div>
+          <div class="seg" id="speedMetric" role="group" aria-label="Metric">
+            <button data-m="download_mbps" aria-pressed="true">Download</button>
+            <button data-m="upload_mbps" aria-pressed="false">Upload</button>
+          </div>
+          
+        </div>
+        <div class="chart-box tall"><canvas id="cSpeed"></canvas></div>
+        <div class="stat-grid" id="speedStats"></div>
+      </div>
+    </section>
+
+    <!-- LATENCY -->
+    <section class="view hidden" data-panel="latency">
+      <div class="panel">
+        <div class="panel-h">
+          <h3>Latency &amp; Bufferbloat</h3>
+          <div class="desc">Unloaded vs loaded latency. When loaded sits well above unloaded, your connection chokes under load — that's bufferbloat, and it's what makes calls stutter while something downloads.</div>
+        </div>
+        <div class="panel-controls"><div class="seg" id="latSeries" role="group" aria-label="Latency series"></div></div>
+        <div class="chart-box tall"><canvas id="cLatency"></canvas></div>
+        <div class="stat-grid" id="latStats"></div>
+      </div>
+    </section>
+    <!-- JITTER -->
+    <section class="view hidden" data-panel="jitter">
+      <div class="panel">
+        <div class="panel-h">
+          <h3>Jitter over time</h3>
+          <div class="desc">Variation in latency between samples. Low and flat is good; spikes mean an unstable line that hurts real-time apps.</div>
+        </div>
+        <div class="chart-box tall"><canvas id="cJitter"></canvas></div>
+        <div class="stat-grid" id="jitStats"></div>
+      </div>
+    </section>
+
+    <!-- CDN -->
+    <section class="view hidden" data-panel="cdn">
+      <div class="panel">
+        <div class="panel-h">
+          <h3>Download by source</h3>
+          <div class="desc">Same line, different servers. If one source is slow while others are fast, the bottleneck is that route — not your connection. Cloudflare uses the full-test download.</div>
+        </div>
+        <div class="panel-controls">
+          <div class="seg" id="cdnSize" role="group" aria-label="File size">
+            <button data-s="large" aria-pressed="true">Large · 25MB</button>
+            <button data-s="medium" aria-pressed="false">Medium · 10MB</button>
+            <button data-s="small" aria-pressed="false">Small · 1MB</button>
+          </div>
+          <div class="seg" id="cdnSmooth" role="group" aria-label="Smoothing">
+            <button data-sm="daily" aria-pressed="true">Daily avg</button>
+            <button data-sm="raw" aria-pressed="false">Raw</button>
+          </div>
+        </div>
+        <div class="chart-box tall"><canvas id="cCdn"></canvas></div>
+        <div class="stat-grid" id="cdnStats"></div>
+      </div>
+    </section>
+
+    <!-- TIME OF DAY -->
+    <section class="view hidden" data-panel="tod">
+      <div class="panel">
+        <div class="panel-h">
+          <h3>Performance by hour of day</h3>
+          <div class="desc">Average download for each hour, pooled across all days. A dip during evening peak hours is the signature of congestion or throttling at busy times.</div>
+        </div>
+        <div class="panel-controls">
+          <div class="seg" id="todMetric" role="group" aria-label="Metric">
+            <button data-m="download_mbps" aria-pressed="true">Download</button>
+            <button data-m="upload_mbps" aria-pressed="false">Upload</button>
+            <button data-m="latency_ms" aria-pressed="false">Latency</button>
+          </div>
+        </div>
+        <div class="chart-box tall"><canvas id="cTod"></canvas></div>
+        <div id="todVerdict" class="note"></div>
+      </div>
+    </section>
+
+    <!-- RELIABILITY -->
+    <section class="view hidden" data-panel="reliability">
+      <div class="panel">
+        <div class="panel-h">
+          <h3>Test reliability over time</h3>
+          <div class="desc">Share of tests that failed, by day. Bursts of errors often line up with outages or line faults worth raising with your ISP.</div>
+        </div>
+        <div class="chart-box tall"><canvas id="cRel"></canvas></div>
+        <div class="stat-grid" id="relStats"></div>
+        <div id="relList" class="note"></div>
+      </div>
+    </section>
+
+    <!-- DISPUTE / EVIDENCE -->
+    <section class="view hidden" data-panel="dispute">
+      <div class="panel" style="padding-bottom:8px">
+        <div class="panel-h">
+          <h3>Build your evidence summary</h3>
+          <div class="desc">Enter the speeds your ISP advertised. The summary below compares them against what was actually measured, ready to screenshot.</div>
+        </div>
+      </div>
+
+      <div class="evidence">
+        <div class="ev-head">
+          <div class="eyebrow">Broadband performance report · generated locally</div>
+          <h2 id="evTitle">Performance summary</h2>
+          <div class="sum" id="evSummary">Enter your advertised speeds above to generate a plain-language summary.</div>
+        </div>
+        <div class="ev-body">
+          <div class="ev-grid" id="evGrid"></div>
+        </div>
+        <div class="ev-foot">
+          <span id="evFoot">—</span>
+          <span>Measured by ISTB · Cloudflare full test · times in <span id="evTz">local</span> zone</span>
+        </div>
+      </div>
+      <p class="note">This summary is generated entirely on your device from the file you loaded. It isn't legal advice, but it gives a non-technical, factual snapshot of sustained performance you can share with your provider or a regulator.</p>
+    </section>
+
+    <p class="footer">
+      ISTB Telemetry Viewer · runs fully offline in your browser<br>
+      <span id="rowCount"></span>
+    </p>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
+<script src="js/state.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/data-loader.js"></script>
+<script src="js/chart-helpers.js"></script>
+<script src="js/views/instrument.js"></script>
+<script src="js/views/overview.js"></script>
+<script src="js/views/speed.js"></script>
+<script src="js/views/latency.js"></script>
+<script src="js/views/jitter.js"></script>
+<script src="js/views/cdn.js"></script>
+<script src="js/views/tod.js"></script>
+<script src="js/views/reliability.js"></script>
+<script src="js/views/dispute.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
