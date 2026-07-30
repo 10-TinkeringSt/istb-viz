@@ -59,6 +59,7 @@
       </div>
       <span class="muted-link">SQLite read locally with sql.js (WASM) · charts with Chart.js</span>
     </div>
+    <p class="sample-links">Download a <a href="payload/demo_result.csv" download="sample_results.csv">sample_results.csv</a> to try it out. Alternatively check out the <a href="?demo=true">demo site</a>.</p>
     <div id="dropErr"></div>
     <input type="file" id="fileInput" accept=".db,.sqlite,.sqlite3,.csv" style="position:absolute;left:-9999px" aria-hidden="true">
   </div>
@@ -67,6 +68,11 @@
 
   <!-- main dashboard -->
   <main id="app" class="hidden">
+
+    <div id="demoBanner" class="demo-banner hidden">
+      <span>Viewing sample data — drop your own file to see your own results.</span>
+      <button id="demoExit" class="btn ghost">Use my own file</button>
+    </div>
 
     <!-- instrument header -->
     <div class="instrument">

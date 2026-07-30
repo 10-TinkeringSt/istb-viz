@@ -103,6 +103,41 @@ function normalize(rows){
   return out;
 }
 
+/* ---------- demo mode ---------- */
+function isDemoRequested(){
+  return new URLSearchParams(location.search).get('demo')==='true' || location.pathname.replace(/\/+$/,'').endsWith('/demo');
+}
+async function loadDemo(){
+  $('#dropView').classList.add('hidden');
+  $('#dropErr').innerHTML='';
+  $('#loadingView').classList.remove('hidden');
+  $('#loadingMsg').textContent='Loading sample data…';
+  try{
+    const res = await fetch('payload/demo_result.csv');
+    if(!res.ok) throw new Error('Sample data file not found.');
+    const rows = parseCSV(await res.text());
+    RAW = normalize(rows);
+    if(!RAW.length){ showErr('Sample data file had no usable rows.'); return; }
+    $('#loadingView').classList.add('hidden');
+    boot();
+    $('#demoBanner').classList.remove('hidden');
+  }catch(err){
+    console.error(err);
+    showErr(String(err && err.message || err));
+  }
+}
+$('#demoExit').addEventListener('click',()=>{
+  const url = new URL(location.href);
+  url.searchParams.delete('demo');
+  if(url.pathname.replace(/\/+$/,'').endsWith('/demo')) url.pathname = url.pathname.replace(/\/demo\/?$/,'/');
+  history.replaceState(null,'',url);
+  $('#demoBanner').classList.add('hidden');
+  $('#app').classList.add('hidden'); $('#toolbar').style.display='none';
+  $('#dropView').classList.remove('hidden'); $('#dropErr').innerHTML='';
+  Object.values(charts).forEach(c=>c&&c.destroy()); charts={};
+});
+if(isDemoRequested()) loadDemo();
+
 /* ---------- filtering ---------- */
 function inRange(){
   if(!state.rangeDays) return RAW;

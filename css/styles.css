@@ -96,11 +96,19 @@ button{font-family:inherit}
 .tag{font-family:"JetBrains Mono";font-size:11px;color:var(--txt-2);border:1px solid var(--line);background:var(--deck);
   padding:4px 9px;border-radius:6px;letter-spacing:.04em}
 .muted-link{color:var(--txt-3);font-size:12px;margin-top:18px;display:block}
+.sample-links{text-align:center;color:var(--txt-3);font-size:12.5px;margin:14px auto 0}
+.sample-links a{color:var(--c-down)}
 
 .loading{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--txt-2);padding:40px;font-size:13px}
 .spin{width:18px;height:18px;border:2px solid var(--line-2);border-top-color:var(--c-down);border-radius:50%;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .errbox{border:1px solid var(--err);background:rgba(255,92,92,.08);color:#ffd9d9;border-radius:12px;padding:14px 16px;margin-top:14px;font-size:13px}
+
+.demo-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  border:1px solid rgba(255,92,92,.35);background:rgba(255,92,92,.1);color:var(--txt);
+  border-radius:12px;padding:10px 14px;margin-bottom:16px;font-size:13px}
+.demo-banner .btn{flex:none;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16)}
+.demo-banner .btn:hover{background:rgba(255,255,255,.14)}
 
 /* ---------- Layout grids ---------- */
 .hidden{display:none !important}
