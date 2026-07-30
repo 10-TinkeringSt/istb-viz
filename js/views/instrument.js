@@ -7,6 +7,7 @@ function drawInstrument(){
   const dl=cf.map(r=>r.download_mbps).filter(v=>v!=null);
   const ul=cf.map(r=>r.upload_mbps).filter(v=>v!=null);
   const lat=cf.map(r=>r.latency_ms).filter(v=>v!=null);
+  const jit=cf.map(r=>r.jitter_ms).filter(v=>v!=null);
   const errs=rows.filter(r=>r.status==='error').length;
   const errRate = rows.length ? errs/rows.length*100 : 0;
 
@@ -23,7 +24,8 @@ function drawInstrument(){
     {k:'Median download',c:CH.down,v:fmt(quantile(dl,.5),0),u:'Mbps',sub:`min ${fmt(Math.min(...(dl.length?dl:[NaN])),0)} · max ${fmt(Math.max(...(dl.length?dl:[NaN])),0)}`},
     {k:'Median upload',c:CH.up,v:fmt(quantile(ul,.5),0),u:'Mbps',sub:`p5 ${fmt(quantile(ul,.05),0)} · p95 ${fmt(quantile(ul,.95),0)}`},
     {k:'Median latency',c:CH.lat,v:fmt(quantile(lat,.5),0),u:'ms',sub:`p95 ${fmt(quantile(lat,.95),0)} ms`},
-    {k:'Tests run',c:CH.jit,v:fmt(rows.length,0),u:'',sub:`${cf.length} full-test rows`},
+    {k:'Median jitter',c:CH.jit,v:fmt(quantile(jit,.5),0),u:'ms',sub:`p95 ${fmt(quantile(jit,.95),0)} ms`},
+    {k:'Tests run',c:CH.txt2,v:fmt(rows.length,0),u:'',sub:`${cf.length} full-test rows`},
     {k:'Error rate',c:errRate>2?CH.load:CH.jit,v:fmt(errRate,1),u:'%',sub:`${errs} failed`,cls:errRate>2?'bad':'good'},
   ];
   cards.forEach(c=>{
