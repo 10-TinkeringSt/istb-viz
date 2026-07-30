@@ -8,16 +8,22 @@ const GLOSSARY = {
   jitter: `How much your latency wobbles from one moment to the next, rather than how high it is. Imagine two connections that both average the same "reaction time" — one stays steady every time, the other swings wildly high and low. The steady one will feel smooth on a call; the wobbly one will feel choppy, even though its average looks identical. Low, flat jitter is good; spiky jitter means an unstable connection.`,
   testCycle: `One full round of testing — typically your bot runs several tests back to back (for example, a small file, then a medium file, then a large file) and we group those together as a single cycle when building certain charts.`,
   errorRate: `The percentage of tests that failed to complete at all, rather than just running slow. A rising error rate, or a cluster of errors around a specific time, often points to an outage or a genuinely broken connection rather than ordinary slowness.`,
-  p5p95: `A way of describing your worst and best typical results, without being thrown off by a one-off fluke. "p5" means 5% of your tests were slower than this — so it's roughly "even on a bad day, this is about what you got." "p95" is the mirror image — roughly your best typical result, not counting rare lucky bursts. These numbers are widely used by network engineers and regulators for exactly this reason: they're a fair, hard-to-argue-with way to describe "how bad does it usually get," rather than cherry-picking a single best or worst result.`,
+  p5p95: `pXX is percentile. A way of describing your worst and best typical results, without being thrown off by a one-off fluke. "p5" means 5% of your tests were slower than this — so it's roughly "even on a bad day, this is about what you got." "p95" is the mirror image — roughly your best typical result, not counting rare lucky bursts. These numbers are widely used by network engineers and regulators for exactly this reason: they're a fair, hard-to-argue-with way to describe "how bad does it usually get," rather than cherry-picking a single best or worst result.`,
   spreadBand: `On charts with more than one line (for example, small/medium/large file downloads), the shaded area shows the full range between your slowest and fastest result at each point in time. A wide band means the different sizes performed very differently; a narrow band means they were all roughly the same.`,
   advertised: `"Advertised speed" is what your provider promised you'd get. The "underperformance threshold" is the minimum speed you expect to see — if your median download is below that, it counts as underperforming.`,
 };
 
-/* returns markup for a small "(i)" icon; embed inline in any template string */
-function infoIcon(key){
-  const text=GLOSSARY[key];
+/* joins one or more GLOSSARY entries into a single tooltip string */
+function glossaryText(keys){
+  return (Array.isArray(keys)?keys:[keys]).map(k=>GLOSSARY[k]).filter(Boolean).join('\n\n');
+}
+/* returns markup for a single small "(i)" icon covering one or more glossary
+   keys — when multiple keys are given, their text is combined into one tooltip */
+function infoIcon(keys){
+  const list=Array.isArray(keys)?keys:[keys];
+  const text=glossaryText(list);
   if(!text) return '';
-  return ` <button type="button" class="info-ico" data-tip-key="${key}" aria-label="${escapeHtml(text)}">i</button>`;
+  return ` <button type="button" class="info-ico" data-tip-key="${list.join(',')}" aria-label="${escapeHtml(text)}">i</button>`;
 }
 
 (function(){
@@ -43,7 +49,7 @@ function infoIcon(key){
     bubble.style.top=top+'px';
   }
   function showTip(icon){
-    const text=GLOSSARY[icon.dataset.tipKey];
+    const text=glossaryText(icon.dataset.tipKey.split(','));
     if(!text) return;
     ensureBubble();
     bubble.textContent=text;
