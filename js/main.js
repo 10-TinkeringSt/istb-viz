@@ -5,6 +5,7 @@ function boot(){
   applyChartDefaults();
   $('#app').classList.remove('hidden');
   $('#toolbar').style.display='flex';
+  $('#pdfBtn').style.display='inline-flex';
   $('#rowCount').textContent=`${RAW.length.toLocaleString()} rows · ${testTypes(RAW).length} test types`;
   buildSpeedTestSeg();
   ovSel={dl:{small:true,medium:true,large:true,band:true,cdns:new Set()},ul:{small:true,medium:true,large:true,band:true}};
@@ -21,6 +22,7 @@ function wireControls(){
     state.tz=b.dataset.tz; segPress(b); $('#evTz').textContent=state.tz==='utc'?'UTC':'local'; refreshAll();
   }));
   $$('.tab').forEach(t=>t.addEventListener('click',()=>selectTab(t.dataset.tab)));
+  $('#pdfBtn').addEventListener('click', generatePdfReport);
 
   // view-local controls
   $$('#speedTest button,#speedMetric button,#speedSize button').forEach(b=>

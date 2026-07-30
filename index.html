@@ -39,6 +39,10 @@
       </div>
       <button class="btn ghost" id="newFile" title="Load a different file">↻ New file</button>
     </div>
+    <button class="btn ghost" id="pdfBtn" type="button" style="display:none" title="Download a PDF report of the current view">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" style="width:13px;height:13px"><path d="M12 3v11.5M12 14.5l-4-4M12 14.5l4-4M5 17v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      PDF report
+    </button>
     <button class="theme-btn" id="themeBtn" type="button" title="Switch color theme" aria-label="Switch color theme">
       <svg class="i-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v2.4M12 19.6V22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2 12h2.4M19.6 12H22M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       <svg class="i-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.3A8.5 8.5 0 1 1 9.7 4a7 7 0 0 0 10.3 10.3Z" fill="currentColor"/></svg>
@@ -349,10 +353,35 @@
       </div>
     </div>
   </div>
+
+  <!-- PDF export progress -->
+  <div class="pdf-overlay hidden" id="pdfOverlay">
+    <div class="pdf-progress">
+      <span class="spin"></span>
+      <span id="pdfProgressMsg">Preparing report…</span>
+    </div>
+  </div>
+
+  <!-- advertised-values-missing prompt -->
+  <div class="help-overlay hidden" id="advPromptOverlay">
+    <div class="help-modal" style="width:min(380px,100%)" role="alertdialog" aria-modal="true" aria-labelledby="advPromptTitle">
+      <div class="help-modal-head">
+        <h2 id="advPromptTitle">Advertised speeds needed</h2>
+      </div>
+      <div class="help-modal-body">
+        <p>Enter your advertised download, advertised upload, and download minimum guarantee in the header above — the PDF report includes them in the ISP Evidence summary.</p>
+        <div style="text-align:right;margin-top:6px">
+          <button class="btn" id="advPromptOk" type="button">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="js/state.js"></script>
 <script src="js/theme.js"></script>
 <script src="js/utils.js"></script>
@@ -369,6 +398,7 @@
 <script src="js/views/reliability.js"></script>
 <script src="js/views/dispute.js"></script>
 <script src="js/help.js"></script>
+<script src="js/pdf-report.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>
