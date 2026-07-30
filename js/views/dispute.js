@@ -46,26 +46,26 @@ function drawDispute(){
   // grid
   const grid=$('#evGrid'); grid.innerHTML='';
   const cellTargets=evCell('Advertised targets',[
-    ['Download',advD?`${fmt(advD,0)} Mbps`:'—'],
-    ['Upload',advU?`${fmt(advU,0)} Mbps`:'—'],
-    ['Threshold',`${fmt(thr,0)} Mbps`],
+    [`Download${infoIcon('advertised')}`,advD?`${fmt(advD,0)} Mbps`:'—'],
+    [`Upload${infoIcon('advertised')}`,advU?`${fmt(advU,0)} Mbps`:'—'],
+    [`Threshold${infoIcon('advertised')}`,`${fmt(thr,0)} Mbps`],
   ]);
   const cellDown=evCell('Download',[
     ['Median',`${fmt(medD,1)} Mbps`],['Mean',`${fmt(mean(dl),1)} Mbps`],
-    ['p5 (worst 5%)',`${fmt(quantile(dl,.05),1)} Mbps`],['p95 (best 5%)',`${fmt(quantile(dl,.95),1)} Mbps`],
+    [`p5 (worst 5%)${infoIcon('p5p95')}`,`${fmt(quantile(dl,.05),1)} Mbps`],[`p95 (best 5%)${infoIcon('p5p95')}`,`${fmt(quantile(dl,.95),1)} Mbps`],
     ['Minimum',`${fmt(Math.min(...dl),1)} Mbps`],
     advD?['% of advertised',`${fmt(medD/advD*100,0)}%`]:null,
     belowD!=null?[`% below ${fmt(thr,0)} Mbps target`,`${fmt(belowD,0)}%`]:null,
   ]);
   const cellUp=evCell('Upload',[
     ['Median',`${fmt(medU,1)} Mbps`],['Mean',`${fmt(mean(ul),1)} Mbps`],
-    ['p5',`${fmt(quantile(ul,.05),1)} Mbps`],['p95',`${fmt(quantile(ul,.95),1)} Mbps`],
+    [`p5${infoIcon('p5p95')}`,`${fmt(quantile(ul,.05),1)} Mbps`],[`p95${infoIcon('p5p95')}`,`${fmt(quantile(ul,.95),1)} Mbps`],
     advU?['% of advertised',`${fmt(medU/advU*100,0)}%`]:null,
     belowU!=null?[`% below ${fmt(thr,0)} Mbps target`,`${fmt(belowU,0)}%`]:null,
   ]);
   const cellLat=evCell('Latency & reliability',[
     ['Median latency',`${fmt(quantile(lat,.5),0)} ms`],
-    ['p95 latency',`${fmt(quantile(lat,.95),0)} ms`],
+    [`p95 latency${infoIcon('p5p95')}`,`${fmt(quantile(lat,.95),0)} ms`],
     ['Tests run',`${rows.length.toLocaleString()}`],
     ['Failed tests',`${all.filter(r=>r.status==='error').length}`],
     ['Test cadence',`~${fmt(span?rows.length/span:0,0)}/day`],

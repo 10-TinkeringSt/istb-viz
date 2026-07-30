@@ -31,7 +31,7 @@ function drawSpeed(){
   statCards('#speedStats',[
     ['Median',`${fmt(quantile(all,.5),1)} <small>${yt}</small>`],
     ['Mean',`${fmt(mean(all),1)} <small>${yt}</small>`],
-    ['p5 — p95',`${fmt(quantile(all,.05),0)}–${fmt(quantile(all,.95),0)}`],
+    [`p5 — p95${infoIcon('p5p95')}`,`${fmt(quantile(all,.05),0)}–${fmt(quantile(all,.95),0)}`],
     ['Min',`${fmt(Math.min(...all),1)}`],
     ['Max',`${fmt(Math.max(...all),1)}`],
     ['Samples',`${fmt(all.length,0)}`],

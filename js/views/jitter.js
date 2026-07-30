@@ -11,7 +11,7 @@ function drawJitter(){
   statCards('#jitStats',[
     ['Median',`${fmt(quantile(j,.5),1)} <small>ms</small>`],
     ['Mean',`${fmt(mean(j),1)} <small>ms</small>`],
-    ['p95',`${fmt(quantile(j,.95),1)} <small>ms</small>`],
+    [`p95${infoIcon('p5p95')}`,`${fmt(quantile(j,.95),1)} <small>ms</small>`],
     ['Max spike',`${fmt(Math.max(...j),0)} <small>ms</small>`],
     ['Stable samples',`${fmt(j.filter(v=>v<10).length/j.length*100,0)}<small>% &lt;10ms</small>`],
     ['Samples',`${fmt(j.length,0)}`],

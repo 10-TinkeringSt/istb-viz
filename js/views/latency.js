@@ -40,9 +40,9 @@ function drawLatency(){
     ['Median unloaded',`${fmt(quantile(ul,.5),0)} <small>ms</small>`],
     ['Median loaded',`${fmt(quantile(ld,.5),0)} <small>ms</small>`],
     ['Bufferbloat (median Δ)',`${fmt(medDelta,1)} <small>ms</small>`],
-    ['Worst-case Δ (p95)',`${fmt(quantile(deltas,.95),0)} <small>ms</small>`],
+    [`Worst-case Δ (p95)${infoIcon('p5p95')}`,`${fmt(quantile(deltas,.95),0)} <small>ms</small>`],
     ['Bufferbloat grade',`<span class="pill ${grade==='minimal'?'good':grade==='moderate'?'warn':'bad'}">${grade}</span>`],
-    ['p95 unloaded',`${fmt(quantile(ul,.95),0)} <small>ms</small>`],
+    [`p95 unloaded${infoIcon('p5p95')}`,`${fmt(quantile(ul,.95),0)} <small>ms</small>`],
   ]);
 }
 

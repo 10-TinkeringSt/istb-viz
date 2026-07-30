@@ -21,16 +21,16 @@ function drawInstrument(){
   // readouts
   const ro=$('#readouts'); ro.innerHTML='';
   const cards=[
-    {k:'Median download',c:CH.down,v:fmt(quantile(dl,.5),0),u:'Mbps',sub:`min ${fmt(Math.min(...(dl.length?dl:[NaN])),0)} · max ${fmt(Math.max(...(dl.length?dl:[NaN])),0)}`},
-    {k:'Median upload',c:CH.up,v:fmt(quantile(ul,.5),0),u:'Mbps',sub:`p5 ${fmt(quantile(ul,.05),0)} · p95 ${fmt(quantile(ul,.95),0)}`},
-    {k:'Median latency',c:CH.lat,v:fmt(quantile(lat,.5),0),u:'ms',sub:`p95 ${fmt(quantile(lat,.95),0)} ms`},
-    {k:'Median jitter',c:CH.jit,v:fmt(quantile(jit,.5),0),u:'ms',sub:`p95 ${fmt(quantile(jit,.95),0)} ms`},
-    {k:'Tests run',c:CH.txt2,v:fmt(rows.length,0),u:'',sub:`${cf.length} full-test rows`},
-    {k:'Error rate',c:errRate>2?CH.load:CH.jit,v:fmt(errRate,1),u:'%',sub:`${errs} failed`,cls:errRate>2?'bad':'good'},
+    {k:'Median download',info:'speed',c:CH.down,v:fmt(quantile(dl,.5),0),u:'Mbps',sub:`min ${fmt(Math.min(...(dl.length?dl:[NaN])),0)} · max ${fmt(Math.max(...(dl.length?dl:[NaN])),0)}`},
+    {k:'Median upload',info:'speed',c:CH.up,v:fmt(quantile(ul,.5),0),u:'Mbps',sub:`p5 ${fmt(quantile(ul,.05),0)} · p95 ${fmt(quantile(ul,.95),0)}${infoIcon('p5p95')}`},
+    {k:'Median latency',info:'latency',c:CH.lat,v:fmt(quantile(lat,.5),0),u:'ms',sub:`p95 ${fmt(quantile(lat,.95),0)} ms${infoIcon('p5p95')}`},
+    {k:'Median jitter',info:'jitter',c:CH.jit,v:fmt(quantile(jit,.5),0),u:'ms',sub:`p95 ${fmt(quantile(jit,.95),0)} ms${infoIcon('p5p95')}`},
+    {k:'Tests run',info:'testCycle',c:CH.txt2,v:fmt(rows.length,0),u:'',sub:`${cf.length} full-test rows`},
+    {k:'Error rate',info:'errorRate',c:errRate>2?CH.load:CH.jit,v:fmt(errRate,1),u:'%',sub:`${errs} failed`,cls:errRate>2?'bad':'good'},
   ];
   cards.forEach(c=>{
     const el=document.createElement('div'); el.className='ro';
-    el.innerHTML=`<div class="k"><span class="swatch" style="background:${c.c}"></span>${c.k}</div>
+    el.innerHTML=`<div class="k"><span class="swatch" style="background:${c.c}"></span>${c.k}${infoIcon(c.info)}</div>
       <div class="v">${c.v}<small>${c.u}</small></div>
       <div class="sub ${c.cls||''}">${c.sub}</div>`;
     ro.appendChild(el);

@@ -81,7 +81,7 @@ function drawOverview(){
 }
 
 /* one toggle chip */
-function chip(container,{label,color,on,dashed,onToggle,disabled}){
+function chip(container,{label,color,on,dashed,onToggle,disabled,infoKey}){
   const b=document.createElement('button');
   b.className='chk'; b.disabled = !!disabled; b.setAttribute('aria-pressed',on?'true':'false');
   const mark=dashed
@@ -96,6 +96,10 @@ function chip(container,{label,color,on,dashed,onToggle,disabled}){
     });
   }
   container.appendChild(b);
+  if(infoKey){
+    // icon lives outside the (possibly disabled) button so it stays independently interactive
+    container.insertAdjacentHTML('beforeend', infoIcon(infoKey));
+  }
   return b;
 }
 
@@ -117,9 +121,9 @@ function buildOverviewControls(){
   if(dlCount<2) ovSel.dl.band=false;
   if(ulCount<2) ovSel.ul.band=false;
   // render spread band chips in the right-hand container so they appear separated from the size chips
-  if(dlR) chip(dlR,{label:'Spread band',color:'rgba(77,208,225,.55)',on:ovSel.dl.band,onToggle:v=>{ovSel.dl.band=v;drawOverview();},disabled:dlCount<2});
-  else chip(dlS,{label:'Spread band',color:'rgba(77,208,225,.55)',on:ovSel.dl.band,onToggle:v=>{ovSel.dl.band=v;drawOverview();},disabled:dlCount<2});
-  if(ulR) chip(ulR,{label:'Spread band',color:'rgba(167,139,250,.55)',on:ovSel.ul.band,onToggle:v=>{ovSel.ul.band=v;drawOverview();},disabled:ulCount<2});
-  else chip(ulS,{label:'Spread band',color:'rgba(167,139,250,.55)',on:ovSel.ul.band,onToggle:v=>{ovSel.ul.band=v;drawOverview();},disabled:ulCount<2});
+  if(dlR) chip(dlR,{label:'Spread band',color:'rgba(77,208,225,.55)',on:ovSel.dl.band,onToggle:v=>{ovSel.dl.band=v;drawOverview();},disabled:dlCount<2,infoKey:'spreadBand'});
+  else chip(dlS,{label:'Spread band',color:'rgba(77,208,225,.55)',on:ovSel.dl.band,onToggle:v=>{ovSel.dl.band=v;drawOverview();},disabled:dlCount<2,infoKey:'spreadBand'});
+  if(ulR) chip(ulR,{label:'Spread band',color:'rgba(167,139,250,.55)',on:ovSel.ul.band,onToggle:v=>{ovSel.ul.band=v;drawOverview();},disabled:ulCount<2,infoKey:'spreadBand'});
+  else chip(ulS,{label:'Spread band',color:'rgba(167,139,250,.55)',on:ovSel.ul.band,onToggle:v=>{ovSel.ul.band=v;drawOverview();},disabled:ulCount<2,infoKey:'spreadBand'});
 }
 
