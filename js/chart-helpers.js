@@ -22,21 +22,18 @@ function prettyTest(t){
 /* ---------- Chart.js defaults ---------- */
 function applyChartDefaults(){
   const C=Chart;
-  C.defaults.color=CH.txt2;
   C.defaults.font.family="'JetBrains Mono','Inter',monospace";
   C.defaults.font.size=11;
   C.defaults.maintainAspectRatio=false;
   C.defaults.animation = false;   // rebuild-on-toggle charts must not queue animations (avoids stale _fn crash)
   C.defaults.plugins.legend.display=false;
-  C.defaults.plugins.tooltip.backgroundColor='#0B0E14';
-  C.defaults.plugins.tooltip.borderColor='#2E3A52';
   C.defaults.plugins.tooltip.borderWidth=1;
-  C.defaults.plugins.tooltip.titleColor='#E7ECF5';
-  C.defaults.plugins.tooltip.bodyColor='#93A0B8';
   C.defaults.plugins.tooltip.padding=10;
   C.defaults.plugins.tooltip.cornerRadius=8;
   C.defaults.plugins.tooltip.titleFont={family:"'JetBrains Mono'",size:11};
   C.defaults.plugins.tooltip.bodyFont={family:"'JetBrains Mono'",size:12};
+  // color:defaults (axis/legend text, tooltip bg/border/title) are theme-dependent — see theme.js
+  if(typeof applyThemeColors==='function') applyThemeColors(document.documentElement.getAttribute('data-theme')||'dark');
 }
 function timeAxis(extra={}){
   return Object.assign({

@@ -16,8 +16,8 @@ const SIZE_BYTES = { small:'1 MB', medium:'10 MB', large:'25 MB' };
 const DL_SIZE = { small:'#9CE8F2', medium:'#4DD0E1', large:'#2293AE' };
 const UL_SIZE = { small:'#CDBEFB', medium:'#A78BFA', large:'#6E4BD6' };
 const SIZE_LBL = { small:'Small · 1MB', medium:'Medium · 10MB', large:'Large · 25MB' };
-const DL_BAND = 'rgba(77,208,225,.12)';
-const UL_BAND = 'rgba(167,139,250,.12)';
+let DL_BAND = 'rgba(77,208,225,.12)';
+let UL_BAND = 'rgba(167,139,250,.12)';
 
 let RAW = [];           // all normalized rows
 let charts = {};        // live Chart instances by key
